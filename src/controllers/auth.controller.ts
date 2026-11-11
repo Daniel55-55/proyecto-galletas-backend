@@ -40,6 +40,8 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
     const contrasena = String(req.body?.contrasena ?? '');
 
     const encontrado = await UsuarioModel.obtenerPorUsuario(usuario);
+    
+    // Compara la contraseña enviada con el hash guardado en Supabase
     if (!encontrado || !(await bcrypt.compare(contrasena, encontrado.contrasena_hash))) {
       res.status(401).json({ message: 'Usuario o contraseña incorrectos' });
       return;
