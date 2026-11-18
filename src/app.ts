@@ -15,10 +15,10 @@ app.get('/api/v1/health', (req, res) => {
   res.json({ status: 'OK' });
 });
 
-// Autenticación: POST /api/v1/registro y POST /api/v1/login
+// autenticación POST /api/v1/registro y POST /api/v1/login
 app.use('/api/v1', authRoutes);
 
-// Rutas separadas para cada tipo de galleta
+// rutas separadas para cada tipo de galleta
 app.use('/api/v1/galletas-chocolate', galletasChocolateRoutes);
 app.use('/api/v1/galletas-vainilla', galletasVainillaRoutes);
 
