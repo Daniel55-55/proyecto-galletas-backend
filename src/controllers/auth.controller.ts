@@ -7,12 +7,24 @@ export const registrar = async (req: Request, res: Response, next: NextFunction)
     const usuario = String(req.body?.usuario ?? '').trim();
     const contrasena = String(req.body?.contrasena ?? '');
 
-    if (!usuario || !contrasena) {
-      res.status(400).json({ message: 'Usuario y contraseña son obligatorios' });
+    if (usuario.length < 4) {
+      res.status(400).json({ message: 'El usuario debe tener mínimo 4 caracteres' });
+      return;
+    }
+    if (usuario.length > 50) {
+      res.status(400).json({ message: 'El usuario debe tener máximo 50 caracteres' });
+      return;
+    }
+    if (usuario.includes(' ')) {
+      res.status(400).json({ message: 'El usuario no puede tener espacios' });
       return;
     }
     if (contrasena.length < 6) {
       res.status(400).json({ message: 'La contraseña debe tener mínimo 6 caracteres' });
+      return;
+    }
+    if (!/[a-zA-Z]/.test(contrasena) || !/[0-9]/.test(contrasena)) {
+      res.status(400).json({ message: 'La contraseña debe tener al menos una letra y un número' });
       return;
     }
 
@@ -40,8 +52,6 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
     const contrasena = String(req.body?.contrasena ?? '');
 
     const encontrado = await UsuarioModel.obtenerPorUsuario(usuario);
-    
-    // Compara la contraseña enviada con el hash guardado en Supabase
     if (!encontrado || !(await bcrypt.compare(contrasena, encontrado.contrasena_hash))) {
       res.status(401).json({ message: 'Usuario o contraseña incorrectos' });
       return;
